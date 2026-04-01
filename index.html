@@ -3,50 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karaoke IA v5.0 | Engine Externo</title>
+    <title>Llaneras IA Studio | Protik</title>
     <style>
         :root { --primary: #fecb00; --bg: #0d0d0d; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; padding: 10px; text-align: center; }
-        .app-card { width: 100%; max-width: 500px; background: #1a1a1a; padding: 20px; border-radius: 20px; border: 1px solid #333; margin: auto; }
-        iframe { width: 100%; height: 500px; border: none; border-radius: 15px; background: #fff; margin-bottom: 15px; }
-        textarea { width: 100%; height: 150px; background: #000; color: #0f0; border: 1px solid #333; border-radius: 10px; padding: 10px; font-family: monospace; }
-        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: bold; background: var(--primary); color: #000; cursor: pointer; margin-top: 10px; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 15px; }
+        .container { max-width: 500px; margin: auto; background: #1a1a1a; padding: 25px; border-radius: 20px; border: 1px solid #333; }
+        h1 { color: var(--primary); text-align: center; font-size: 22px; margin-bottom: 20px; }
+        
+        .box { background: #222; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
+        .btn { width: 100%; padding: 16px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; display: block; text-align: center; text-decoration: none; font-size: 14px; margin-top: 10px; }
+        .btn-external { background: #fff; color: #000; }
+        .btn-save { background: var(--primary); color: #000; }
+        
+        textarea { width: 100%; height: 150px; background: #000; color: #0f0; border: 1px solid #333; border-radius: 10px; padding: 12px; font-family: 'Courier New', monospace; margin-top: 10px; box-sizing: border-box; }
         audio { width: 100%; margin: 15px 0; filter: invert(1); }
-    </style>
+        small { color: #888; display: block; margin-bottom: 5px; }
+    </small>
 </head>
 <body>
 
-<div class="app-card">
-    <h2 style="color:var(--primary)">🎙️ GENERADOR DE LETRAS IA</h2>
-    
-    <p style="font-size:12px; color:#aaa;">1. Sube tu audio aquí abajo y dale a "Submit"</p>
-    <iframe src="https://sanchit-gandhi-whisper-jax.hf.space"></iframe>
+<div class="container">
+    <h1>🎙️ LLANERAS IA STUDIO</h1>
 
-    <p style="font-size:12px; color:#aaa;">2. Cuando termine, copia el texto y pégalo aquí:</p>
-    <textarea id="editor" placeholder="Pega aquí el resultado de la IA..."></textarea>
-    
-    <p style="font-size:12px; color:#aaa;">3. Prueba tu audio localmente:</p>
-    <input type="file" id="audio-local" accept="audio/*" onchange="cargarAudio(this)">
-    <audio id="player" controls></audio>
+    <div class="box">
+        <strong>1. PROCESAR AUDIO</strong>
+        <small>Usa el motor de alto rendimiento (abre en pestaña nueva):</small>
+        <a href="https://huggingface.co/spaces/sanchit-gandhi/whisper-jax" target="_blank" class="btn btn-external">🚀 ABRIR WHISPER JAX</a>
+    </div>
 
-    <button class="btn" onclick="descargarLRC()">💾 DESCARGAR LETRA (.LRC)</button>
+    <div class="box">
+        <strong>2. GENERAR ARCHIVO .LRC</strong>
+        <small>Pega el texto que te dé la IA arriba:</small>
+        <textarea id="editor" placeholder="Pega el resultado aquí..."></textarea>
+        
+        <small style="margin-top:10px;">Carga tu MP3 para pre-escucha:</small>
+        <input type="file" id="audio-file" accept="audio/*" onchange="loadAudio(this)" style="font-size:11px;">
+        <audio id="player" controls></audio>
+        
+        <button class="btn btn-save" onclick="saveLRC()">💾 DESCARGAR LETRA (.LRC)</button>
+    </div>
 </div>
 
 <script>
-    function cargarAudio(input) {
+    function loadAudio(input) {
         const file = input.files[0];
-        document.getElementById('player').src = URL.createObjectURL(file);
+        if(file) document.getElementById('player').src = URL.createObjectURL(file);
     }
 
-    function descargarLRC() {
-        const texto = document.getElementById('editor').value;
-        const blob = new Blob([texto], {type: "text/plain"});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = "letra_karaoke.lrc";
-        a.click();
+    function saveLRC() {
+        const text = document.getElementById('editor').value;
+        if(!text) return alert("Primero pega el texto de la IA");
+        
+        const blob = new Blob([text], {type: "text/plain"});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = "karaoke_llanera.lrc";
+        link.click();
     }
 </script>
 
 </body>
-</html>
+                  </html>
+        
