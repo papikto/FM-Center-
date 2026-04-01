@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karaoke Studio IA | Editor Profesional</title>
+    <style>
+        :root {
+            --primary: #fecb00; /* Amarillo Llanero */
+            --bg: #0f0f0f;
+            --card: #1e1e1e;
+            --text: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 20px;
+        }
+
+        h1 { margin: 0; color: var(--primary); font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex-grow: 1;
+            height: 70vh;
+        }
+
+        .panel {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Editor Styles */
+        textarea {
+            flex-grow: 1;
+            background: #121212;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 15px;
+            border-radius: 10px;
+            resize: none;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-primary:hover { background: #d4aa00; transform: translateY(-2px); }
+        
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: rgba(254, 203, 0, 0.1); }
+
+        /* Reproductor y Preview */
+        .player-section {
+            margin-top: 20px;
+            background: #000;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        #lyric-preview {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        audio { width: 100%; filter: invert(100%); }
+
+        /* IA Frame */
+        iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .footer-info {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🎙️ Karaoke Studio IA <span style="font-size: 12px; vertical-align: middle; opacity: 0.7;">v1.0</span></h1>
+</header>
+
+<div class="main-layout">
+    <div class="panel">
+        <h2>📝 Editor de Sincronización</h2>
+        <p style="font-size: 13px; margin-bottom: 10px;">Pega aquí el resultado de la IA (SRT/VTT) o escribe la letra.</p>
+        <textarea id="editor-text" placeholder="1. Sube tu audio en el panel de la derecha...&#10;2. Copia el resultado de Whisper...&#10;3. Pégalo aquí para editar y previsualizar."></textarea>
+        
+        <div class="controls">
+            <button class="btn-outline" onclick="importarDesdeIA()">📥 Importar Texto</button>
+            <button class="btn-primary" onclick="descargarProyecto()">💾 Descargar (.LRC)</button>
+        </div>
+
+        <div class="player-section">
+            <div id="lyric-preview">Previsualización en tiempo real</div>
+            <input type="file" id="audio-file" accept="audio/*" style="margin-bottom: 10px; font-size: 12px;">
+            <audio id="audio-player" controls></audio>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>🤖 Motor Whisper (OpenAI)</h2>
+        <iframe 
+            src="https://openai-whisper.hf.space" 
+            frameborder="0">
+        </iframe>
+    </div>
+</div>
+
+<div class="footer-info">
+    Desarrollado para Administración de Redes y Contenido Digital | Modo Creador Activo
+</div>
+
+<script>
+    const player = document.getElementById('audio-player');
+    const preview = document.getElementById('lyric-preview');
+    const editor = document.getElementById('editor-text');
+    let sincronizacion = [];
+
+    // Cargar audio local
+    document.getElementById('audio-file').onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) player.src = URL.createObjectURL(file);
+    };
+
+    // Función para procesar lo que pegues (SRT simple)
+    function parseSRT() {
+        const text = editor.value;
+        const lines = text.split('\n');
+        sincronizacion = [];
+        
+        let currentTime = 0;
+        lines.forEach(line => {
+            if (line.includes('-->')) {
+                const parts = line.split(' --> ');
+                const timeStr = parts[0].split(':');
+                currentTime = parseFloat(parts[0].split(':')[1] * 60) + parseFloat(parts[0].split(':')[2].replace(',', '.'));
+            } else if (line.trim() !== "" && isNaN(line)) {
+                sincronizacion.push({ time: currentTime, text: line });
+            }
+        });
+    }
+
+    // Actualizar previsualización
+    player.ontimeupdate = () => {
+        if (sincronizacion.length === 0) parseSRT();
+        const now = player.currentTime;
+        const active = sincronizacion.filter(s => s.time <= now).pop();
+        if (active) preview.innerText = active.text;
+    };
+
+    function descargarProyecto() {
+        const content = editor.value;
+        const blob = new Blob([content], {type: "text/plain"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "karaoke_final.lrc";
+        a.click();
+    }
+
+    function importarDesdeIA() {
+        alert("Copia el texto del panel derecho y pégalo en el editor de la izquierda para comenzar.");
+    }
+</script>
+
+</body>
+  </html>
+  
