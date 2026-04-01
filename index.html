@@ -6,7 +6,7 @@
     <title>Karaoke Studio IA | Editor Profesional</title>
     <style>
         :root {
-            --primary: #fecb00; /* Amarillo Llanero */
+            --primary: #fecb00; 
             --bg: #0f0f0f;
             --card: #1e1e1e;
             --text: #e0e0e0;
@@ -15,160 +15,141 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
         }
 
         header {
             text-align: center;
-            padding-bottom: 20px;
+            padding: 10px 0;
             border-bottom: 2px solid var(--primary);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        h1 { margin: 0; color: var(--primary); font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
+        h1 { margin: 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
 
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 1fr; /* Móvil primero */
+            gap: 15px;
             flex-grow: 1;
-            height: 70vh;
+            overflow-y: auto;
+        }
+
+        @media (min-width: 768px) {
+            .main-layout { grid-template-columns: 1fr 1fr; overflow: hidden; }
         }
 
         .panel {
             background: var(--card);
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             border: 1px solid #333;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            min-height: 400px;
         }
 
         .panel h2 {
             margin-top: 0;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
         }
 
-        /* Editor Styles */
         textarea {
             flex-grow: 1;
             background: #121212;
             color: #fff;
             border: 1px solid #444;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             resize: none;
-            font-size: 16px;
-            line-height: 1.5;
-            margin-bottom: 15px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            min-height: 150px;
         }
 
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
         button {
-            padding: 12px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 6px;
             border: none;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
+            font-size: 12px;
         }
 
         .btn-primary { background: var(--primary); color: #000; }
-        .btn-primary:hover { background: #d4aa00; transform: translateY(-2px); }
-        
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: rgba(254, 203, 0, 0.1); }
 
-        /* Reproductor y Preview */
         .player-section {
-            margin-top: 20px;
+            margin-top: 15px;
             background: #000;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #444;
         }
 
         #lyric-preview {
-            height: 60px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        audio { width: 100%; filter: invert(100%); }
-
-        /* IA Frame */
-        iframe {
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-            background: white;
-        }
-
-        .footer-info {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #666;
             text-align: center;
         }
+
+        audio { width: 100%; height: 35px; filter: invert(100%); }
+
+        /* IA Frame */
+        .iframe-container { flex-grow: 1; position: relative; border-radius: 10px; overflow: hidden; background: #fff; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .footer { font-size: 10px; color: #555; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🎙️ Karaoke Studio IA <span style="font-size: 12px; vertical-align: middle; opacity: 0.7;">v1.0</span></h1>
+    <h1>🎙️ Karaoke Studio IA v1.1</h1>
 </header>
 
 <div class="main-layout">
     <div class="panel">
-        <h2>📝 Editor de Sincronización</h2>
-        <p style="font-size: 13px; margin-bottom: 10px;">Pega aquí el resultado de la IA (SRT/VTT) o escribe la letra.</p>
-        <textarea id="editor-text" placeholder="1. Sube tu audio en el panel de la derecha...&#10;2. Copia el resultado de Whisper...&#10;3. Pégalo aquí para editar y previsualizar."></textarea>
+        <h2>📝 Editor & Sincronización</h2>
+        <textarea id="editor-text" placeholder="1. Procesa el audio a la derecha.&#10;2. Copia el resultado y pégalo aquí.&#10;3. Carga el audio abajo para probar."></textarea>
         
-        <div class="controls">
-            <button class="btn-outline" onclick="importarDesdeIA()">📥 Importar Texto</button>
-            <button class="btn-primary" onclick="descargarProyecto()">💾 Descargar (.LRC)</button>
+        <div class="btn-group">
+            <button class="btn-outline" onclick="limpiarEditor()">🗑️ Limpiar</button>
+            <button class="btn-primary" onclick="descargarLRC()">💾 Descargar (.LRC)</button>
         </div>
 
         <div class="player-section">
-            <div id="lyric-preview">Previsualización en tiempo real</div>
-            <input type="file" id="audio-file" accept="audio/*" style="margin-bottom: 10px; font-size: 12px;">
+            <div id="lyric-preview">Esperando audio...</div>
+            <input type="file" id="audio-file" accept="audio/*" style="font-size: 10px; color: #888; margin-bottom: 5px;">
             <audio id="audio-player" controls></audio>
         </div>
     </div>
 
     <div class="panel">
-        <h2>🤖 Motor Whisper (OpenAI)</h2>
-        <iframe 
-            src="https://openai-whisper.hf.space" 
-            frameborder="0">
-        </iframe>
+        <h2>🤖 Motor Whisper IA (Rápido)</h2>
+        <div class="iframe-container">
+            <iframe src="https://sanchit-gandhi-whisper-jax.hf.space" allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"></iframe>
+        </div>
     </div>
 </div>
 
-<div class="footer-info">
-    Desarrollado para Administración de Redes y Contenido Digital | Modo Creador Activo
+<div class="footer">
+    Papikto Dev Studio - 2026 | Tecnología Whisper JAX para Sincronización
 </div>
 
 <script>
@@ -180,37 +161,49 @@
     // Cargar audio local
     document.getElementById('audio-file').onchange = (e) => {
         const file = e.target.files[0];
-        if (file) player.src = URL.createObjectURL(file);
+        if (file) {
+            player.src = URL.createObjectURL(file);
+            preview.innerText = "Audio cargado. Dale Play.";
+        }
     };
 
-    // Función para procesar lo que pegues (SRT simple)
-    function parseSRT() {
+    // Procesar texto pegado (Intenta detectar tiempos segundos)
+    function parseTexto() {
         const text = editor.value;
         const lines = text.split('\n');
         sincronizacion = [];
         
-        let currentTime = 0;
+        // Lógica simple para detectar segundos si el texto los trae
         lines.forEach(line => {
-            if (line.includes('-->')) {
-                const parts = line.split(' --> ');
-                const timeStr = parts[0].split(':');
-                currentTime = parseFloat(parts[0].split(':')[1] * 60) + parseFloat(parts[0].split(':')[2].replace(',', '.'));
-            } else if (line.trim() !== "" && isNaN(line)) {
-                sincronizacion.push({ time: currentTime, text: line });
+            const timeMatch = line.match(/\[(\d+:\d+\.\d+)\]/); // Formato LRC
+            if (timeMatch) {
+                const parts = timeMatch[1].split(':');
+                const sec = parseFloat(parts[0] * 60) + parseFloat(parts[1]);
+                sincronizacion.push({ time: sec, text: line.replace(timeMatch[0], "").trim() });
+            } else {
+                // Si no tiene tiempos, el editor los asignará en el futuro
             }
         });
     }
 
-    // Actualizar previsualización
     player.ontimeupdate = () => {
-        if (sincronizacion.length === 0) parseSRT();
+        if (sincronizacion.length === 0) parseTexto();
         const now = player.currentTime;
         const active = sincronizacion.filter(s => s.time <= now).pop();
-        if (active) preview.innerText = active.text;
+        if (active) {
+            preview.innerText = active.text;
+        }
     };
 
-    function descargarProyecto() {
+    function limpiarEditor() {
+        editor.value = "";
+        sincronizacion = [];
+        preview.innerText = "Editor limpio.";
+    }
+
+    function descargarLRC() {
         const content = editor.value;
+        if(!content) return alert("El editor está vacío");
         const blob = new Blob([content], {type: "text/plain"});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -218,12 +211,7 @@
         a.download = "karaoke_final.lrc";
         a.click();
     }
-
-    function importarDesdeIA() {
-        alert("Copia el texto del panel derecho y pégalo en el editor de la izquierda para comenzar.");
-    }
 </script>
 
 </body>
-  </html>
-  
+</html>
